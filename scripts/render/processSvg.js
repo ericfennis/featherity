@@ -16,7 +16,7 @@ function optimize(svg, path, options) {
     plugins: [
       { convertShapeToPath: false },
       { mergePaths: false },
-      { removeAttrs: { attrs: '(fill|stroke.*)' } },
+      // { removeAttrs: { attrs: '(fill|stroke.*)' } },
       { removeTitle: true },
     ],
     ...options,
@@ -48,12 +48,7 @@ function setAttrs(svg) {
  * @param {Promise<string>}
  */
 function processSvg(svg, path, options = {}) {
-  return (
-    optimize(svg, path, options)
-      .then(setAttrs)
-      // .then(svg => svg.replace(/;/g, ''))
-      .catch(console.error)
-  );
+  return optimize(svg, path, options).catch(console.error);
   // remove semicolon inserted by prettier
   // because prettier thinks it's formatting JSX not HTML
 }

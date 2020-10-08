@@ -12,7 +12,6 @@ const svgFiles = readSvgDirectory(ICONS_DIR);
 svgFiles.forEach(async svgFile => {
   const svg = await fs.readFile(path.join(ICONS_DIR, svgFile));
   const content = await processSvg(svg, path.join(ICONS_DIR, svgFile));
-  console.log(content);
   // processSvg(svg).then(content => {
   //   console.log(content);
   // });
