@@ -9,4 +9,5 @@ sandbox
 stash
 coverage
 stats
+converted
 *.log
