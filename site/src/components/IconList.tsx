@@ -1,13 +1,15 @@
-import { Box, Button, Flex, Grid, Text, useToast } from "@chakra-ui/core";
+import { Button, Flex, Grid, Text, useToast } from "@chakra-ui/core";
 import download from 'downloadjs';
+import Link from 'next/link'
 import copy from "copy-to-clipboard";
 import {useContext, useMemo} from "react";
 import {IconStyleContext} from "./CustomizeIconContext";
 import {IconWrapper} from "./IconWrapper";
 import { useRouter } from "next/router";
+import ModifiedTooltip from './ModifiedTooltip';
 
-const IconList = ({icons, enableClick = true, iconListItemProps = {}}) => {
-  const router = useRouter();
+const IconList = ({icons}) => {
+  const router = useRouter()
   const toast = useToast();
   const {color, size, strokeWidth} = useContext(IconStyleContext);
   const { search } = router.query;
@@ -16,54 +18,66 @@ const IconList = ({icons, enableClick = true, iconListItemProps = {}}) => {
 
   return (
     <Grid
-      templateColumns={`repeat(auto-fill, minmax(160px, 1fr))`}
+      templateColumns={`repeat(auto-fill, minmax(150px, 1fr))`}
       gap={5}
+      marginBottom="320px"
     >
       { icons.map((icon) => {
         const actualIcon = icon.item ? icon.item : icon;
-        const { name, content } = actualIcon;
-        const Item = enableClick ? Button : Box;
+        const { name, content, contributors } = actualIcon;
 
         return (
-          <Button
-            variant="ghost"
-            borderWidth="1px"
-            rounded="lg"
-            padding={16}
+          <Link
             key={name}
-            icon={name}
-            opacity={0.999}
-            position="relative"
-            _focus={{ outline: 'none'}}
-            onClick={enableClick ? (event) => {
-              if (event.shiftKey) {
-                copy(actualIcon.src);
-                toast({
-                  title: "Copied!",
-                  description: `Icon "${name}" copied to clipboard.`,
-                  status: "success",
-                  duration: 1500,
-                });
-              }
-              else if (event.metaKey) download(actualIcon.src, `${name}.svg`, "image/svg+xml");
-              else {
-                router.push(`/?iconName=${name}`, `/icon/${name}`)
-              }
-            } : null}
-            alignItems="center"
-            {...iconListItemProps}
+            scroll={false}
+            href={{
+              pathname: '/icon/[iconName]',
+              query: {
+                ...query,
+                iconName: name,
+              },
+            }}
           >
-            <Flex direction="column" align="center" justify="center">
-              <IconWrapper
-                content={content}
-                stroke={color}
-                strokeWidth={strokeWidth}
-                height={size}
-                width={size}
-              />
-              <Text marginTop={5}>{name}</Text>
-            </Flex>
-          </Button>
+            <Button
+              variant="ghost"
+              borderWidth="1px"
+              rounded="lg"
+              padding={16}
+              position="relative"
+              onClick={(event) => {
+                if (event.shiftKey) {
+                  copy(actualIcon.src);
+                  toast({
+                    title: "Copied!",
+                    description: `Icon "${name}" copied to clipboard.`,
+                    status: "success",
+                    duration: 1500,
+                  });
+                }
+                if (event.metaKey) {
+                  download(
+                    actualIcon.src,
+                    `${name}.svg`,
+                    "image/svg+xml"
+                  );
+                }
+              }}
+              key={name}
+              alignItems="center"
+            >
+              { contributors?.length ? ( <ModifiedTooltip/> ) : null}
+              <Flex direction="column" align="center" justify="center">
+                <IconWrapper
+                  content={content}
+                  stroke={color}
+                  strokeWidth={strokeWidth}
+                  height={size}
+                  width={size}
+                />
+                <Text marginTop={5}>{name}</Text>
+              </Flex>
+            </Button>
+          </Link>
         );
       })}
     </Grid>

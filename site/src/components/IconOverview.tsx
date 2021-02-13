@@ -6,16 +6,13 @@ import {
   Text,
   useColorMode,
   Icon,
-  useColorModeValue,
 } from '@chakra-ui/core';
 import IconList from './IconList';
-import IconCategory from './IconCategory'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import useSearch from '../lib/useSearch';
 import { useRouter } from 'next/router';
 import theme from '../lib/theme';
-import { Search as SearchIcon, Library, LayoutGrid } from 'lucide-react';
-import categories from '../../../categories.json'
+import { Search as SearchIcon } from 'lucide-react';
 import debounce from 'lodash/debounce';
 
 const isFilledString = (string) => string !== undefined && string !== null && string !== '';
@@ -26,10 +23,6 @@ const IconOverview = ({ data }) => {
 
   const [queryText, setQueryText] = useState(search);
   const { colorMode } = useColorMode();
-  const [ categoryView, setCategoryView ] = useState(false);
-  const inputBackground = useColorModeValue(theme.colors.white, theme.colors.gray[700]);
-
-  const CategoryViewIcon = categoryView ?  LayoutGrid : Library;
 
   const inputElement = useRef(null);
 
@@ -39,14 +32,6 @@ const IconOverview = ({ data }) => {
       inputElement.current.focus();
     }
   }
-
-  const toggleCategoryView = useCallback(() => {
-    setCategoryView(!categoryView);
-  }, [categoryView]);
-
-  useEffect(() => {
-    setQueryText(search || '');
-  }, [search]);
 
   const setQueryParam = (searchString) => {
     const { query, asPath } = router;
@@ -113,12 +98,9 @@ const IconOverview = ({ data }) => {
           bg={colorMode == 'light' ? theme.colors.white : theme.colors.gray[700]}
         />
       </InputGroup>
-      <Box marginTop={5} marginBottom={320}>
+      <Box marginTop={5}>
         {searchResults.length > 0 ? (
-            categoryView ?
-            <IconCategory icons={searchResults} data={data} categories={categories}/>
-            :
-            <IconList icons={searchResults} />
+          <IconList icons={searchResults} />
         ) : (
           <Text
             fontSize="2xl"

@@ -1,12 +1,11 @@
-import { Box, Divider, Flex, Text, Link, Icon, useColorMode, useColorModeValue, IconButton, Button, WrapItem, Wrap } from "@chakra-ui/core";
+import { Box, Divider, Flex, Text, Link, Icon, useColorMode, useColorModeValue, IconButton } from "@chakra-ui/core";
 import { useKeyBindings } from "../lib/key";
 import { useRouter } from "next/router";
 import NextLink from "next/link"
 import { Moon, Sun } from 'lucide-react';
 import Logo from 'babel-loader!react-svg-loader?jsx=true!../../public/logo.svg';
-import { useCallback } from "react";
 
-const Layout = ({ children, maxWidth = "1250px" }) => {
+const Layout = ({ children }) => {
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
   const text = useColorModeValue('dark', 'light')
@@ -30,16 +29,16 @@ const Layout = ({ children, maxWidth = "1250px" }) => {
 
   return (
     <Box h="100vh">
-      <Flex w="full">
+      <Flex mb={16} w="full">
         <Flex
           alignItems="center"
           justifyContent="space-between"
           pt={4}
           pb={4}
-          maxW={maxWidth}
+          maxW="1250px"
           margin="0 auto"
           w="full"
-          px={8}
+          px={5}
         >
           <Flex justifyContent="center" alignItems="center">
             <NextLink href="/" passHref>
@@ -78,14 +77,15 @@ const Layout = ({ children, maxWidth = "1250px" }) => {
           </Flex>
         </Flex>
       </Flex>
-      <Flex margin="0 auto" direction="column" maxW={maxWidth} px={8} marginBottom={8}>
+      <Flex margin="0 auto" direction="column" maxW="1250px" px={5}>
         {children}
-        <Divider marginTop={4} marginBottom={4}/>
-        <Wrap marginBottom={4}>
-          <WrapItem>
-            <Button variant="ghost" onClick={() => router.push('/edit/categories')}>Edit Categories</Button>
-          </WrapItem>
-        </Wrap >
+        <Divider marginBottom={8} />
+        <p style={{ alignSelf: "center" }}>
+          <a href="https://vercel.com?utm_source=lucide&utm_campaign=oss">
+            <img src="/vercel.svg" alt="Powered by Vercel" width="200" />
+          </a>
+        </p>
+        <br />
       </Flex>
     </Box>
   );
