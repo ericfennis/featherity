@@ -13,41 +13,35 @@ const camelizeAttrs = attrs =>
 
 export default (iconsObject, options) => {
   const iconNodes = {};
+  const iconPaths = {};
 
   Object.keys(iconsObject).forEach(icon => {
     const svgString = iconsObject[icon];
     const dom = parseDOM(svgString);
 
     const children = dom.map(element => {
+      const child = [element.name, { ...element.attribs }];
+
+      const uniqueKey = hash(JSON.stringify(child));
+
       if (options.renderUniqueKey) {
-        const hashSource = {
-          name: element.name,
-          ...element.attribs,
-        };
-
-        const uniqueKey = hash(JSON.stringify(hashSource));
-
         element.attribs.key = uniqueKey;
       }
 
-      return [
-        element.name,
-        {
-          ...(options.camelizeAttrs ? camelizeAttrs(element.attribs) : element.attribs),
-        },
-      ];
+      if (iconPaths[uniqueKey] && JSON.stringify(iconPaths[uniqueKey]) !== JSON.stringify(child)) {
+        throw new Error(`Hash conflict, key ${uniqueKey} already been taken`);
+      }
+
+      iconPaths[uniqueKey] = child;
+
+      return {
+        uniqueKey,
+        child,
+      };
     });
 
-    iconNodes[icon] = !options.noDefaultAttrs
-      ? [
-          'svg',
-          {
-            ...(options.camelizeAttrs ? camelizeAttrs(DEFAULT_ATTRS) : DEFAULT_ATTRS),
-          },
-          children,
-        ]
-      : children;
+    iconNodes[icon] = children;
   });
 
-  return iconNodes;
+  return { iconNodes, iconPaths };
 };
