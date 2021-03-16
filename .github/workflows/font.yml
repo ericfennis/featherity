@@ -26,7 +26,6 @@ jobs:
     - name: Clone sfnt2woff-zopfli repo
       run: git clone https://github.com/bramstein/sfnt2woff-zopfli.git sfnt2woff-zopfli
 
-
     - name: Install and move sfnt2woff-zopfli
       run: |
           cd sfnt2woff-zopfli
@@ -35,7 +34,6 @@ jobs:
 
     - name: Clone woff2
       run: git clone --recursive https://github.com/google/woff2.git
-
 
     - name: Install woff2
       run: |

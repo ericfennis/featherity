@@ -5,27 +5,6 @@ const { parse, stringify } = require('svgson');
 const inputDir = `./icons/`;
 const outputDir = `./converted_icons/`;
 
-async function init() {
-  try {
-    const files = await fs.readdir(inputDir);
-    for (const file of files) {
-      const icon = await fs.readFile(`${inputDir}${file}`);
-      const scaled = await parse(icon.toString(), {
-        transformNode: transformForward,
-      });
-      const outlined = await outlineStroke(stringify(scaled));
-      const outlinedWithoutAttrs = await parse(outlined, {
-        transformNode: transformBackwards,
-      });
-      await fs.writeFile(`${outputDir}${file}`, stringify(outlinedWithoutAttrs));
-    }
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-init();
-
 function transformForward(node) {
   if (node.name === 'svg') {
     return {
@@ -50,3 +29,24 @@ function transformBackwards(node) {
   }
   return node;
 }
+
+async function init() {
+  try {
+    const files = await fs.readdir(inputDir);
+    for (const file of files) {
+      const icon = await fs.readFile(`${inputDir}${file}`);
+      const scaled = await parse(icon.toString(), {
+        transformNode: transformForward,
+      });
+      const outlined = await outlineStroke(stringify(scaled));
+      const outlinedWithoutAttrs = await parse(outlined, {
+        transformNode: transformBackwards,
+      });
+      await fs.writeFile(`${outputDir}${file}`, stringify(outlinedWithoutAttrs));
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+init();
