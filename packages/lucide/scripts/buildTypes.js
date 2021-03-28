@@ -1,4 +1,5 @@
 import path from 'path';
+import defaultAttributes from '../src/defaultAttributes';
 
 import { readSvgDirectory, resetFile, appendFile, toPascalCase } from '../../../scripts/helpers';
 
@@ -8,14 +9,16 @@ const TYPES_FILE_NAME = 'lucide.d.ts';
 
 // Generates header of d.ts file include some types and functions
 const typeDefinitions = `\
-export type IconName = string;
-export type IconNode = readonly [tag: string, object:SVGProps<SVGSVGElement>, children:IconNode?];
-export type IconsObj = { [IconName]: IconNode }
+export declare module 'lucide'
+export interface SVGProps extends Partial<SVGElement> ${JSON.stringify(defaultAttributes, null, 2)}
 
-export interface Attributes extends Partial<Props<Element>> {}
+export type IconNode = readonly [tag: string, object:SVGProps, children?:IconNode];
+export type IconsObj = { [iconName:string]: IconNode }
+
+export interface Attributes extends Partial <Element> {}
 
 export function createElement(icon: IconNode): SVGSVGElement;
-export function createIcons({ icons: IconsObj, nameAttr: string = 'icon-name', attrs: Attributes = {} }): VoidFunction;
+export function createIcons({ icons: IconsObj, nameAttr:string, attrs: Attributes }): VoidFunction;
 
 export declare const icons: IconsObj;
 
